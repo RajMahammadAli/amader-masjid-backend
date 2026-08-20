@@ -6,7 +6,9 @@ const adminProtect = require("../middleware/adminAuthMiddleware");
 
 const router = express.Router();
 
+// ================================
 // Create Admin
+// ================================
 router.post("/create", async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -56,7 +58,9 @@ router.post("/create", async (req, res) => {
   }
 });
 
+// ================================
 // Admin Login
+// ================================
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -86,6 +90,7 @@ router.post("/login", async (req, res) => {
       });
     }
 
+    // Create JWT
     const token = jwt.sign(
       {
         adminId: admin._id,
@@ -97,13 +102,19 @@ router.post("/login", async (req, res) => {
       },
     );
 
+    // ================================
+    // Production Cookie
+    // ================================
     res.cookie("adminToken", token, {
       httpOnly: true,
-      secure: false,
-      sameSite: "lax",
+      secure: true,
+      sameSite: "none",
       path: "/",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+
+    console.log("Admin login successful:", admin.email);
+    console.log("Admin authentication cookie created.");
 
     res.status(200).json({
       message: "Admin login successful.",
@@ -124,7 +135,9 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// ================================
 // Cookie Test Route
+// ================================
 router.get("/cookie-test", (req, res) => {
   console.log("ADMIN COOKIES:", req.cookies);
 
@@ -135,7 +148,9 @@ router.get("/cookie-test", (req, res) => {
   });
 });
 
+// ================================
 // Protected Admin Test Route
+// ================================
 router.get("/protected", adminProtect, async (req, res) => {
   res.status(200).json({
     message: "Admin protected route successfully accessed.",
