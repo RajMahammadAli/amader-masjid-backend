@@ -23,7 +23,6 @@ app.use(
   cors({
     origin: function (origin, callback) {
       // Allow requests without origin
-      // Example: Render health check, Postman, etc.
       if (!origin) {
         return callback(null, true);
       }
