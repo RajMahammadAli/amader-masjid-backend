@@ -17,12 +17,21 @@ const app = express();
 // ================================
 // CORS Configuration
 // ================================
-const allowedOrigins = ["http://localhost:5173", "http://127.0.0.1:5173"];
+
+// Local development + Netlify production
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://127.0.0.1:5173",
+
+  // Netlify frontend
+  "https://amader-masjid.netlify.app",
+];
 
 app.use(
   cors({
     origin: function (origin, callback) {
       // Allow requests without origin
+      // (Postman, server-to-server request etc.)
       if (!origin) {
         return callback(null, true);
       }
@@ -31,8 +40,12 @@ app.use(
         return callback(null, true);
       }
 
+      console.log("CORS blocked origin:", origin);
+
       return callback(new Error("CORS policy: This origin is not allowed."));
     },
+
+    // Required for admin authentication cookie
     credentials: true,
   }),
 );
